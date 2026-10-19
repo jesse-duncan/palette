@@ -26,6 +26,10 @@ jobs:
         with:
           node-version: 20
 
+# Add this step to install dependencies
+      - name: Install dependencies
+        run: npm install          
+
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
 
