@@ -23,6 +23,16 @@ html, body, #root {
   cursor: crosshair;
 }
 
+.stamp-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Floating Toolbar */
 .floating-toolbar {
   position: absolute;
   top: 20px;
@@ -30,23 +40,24 @@ html, body, #root {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 18px;
+  gap: 10px;
+  padding: 6px 16px;
   background: rgba(18, 18, 22, 0.88);
   backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
   color: #ffffff;
   font-family: system-ui, -apple-system, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   pointer-events: auto;
+  z-index: 9999;
 }
 
 .drag-handle {
   cursor: grab;
   opacity: 0.5;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .brand-label {
@@ -58,8 +69,110 @@ html, body, #root {
   padding-right: 10px;
 }
 
+.snap-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #9ca3af;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.snap-btn.active {
+  background: rgba(129, 140, 248, 0.2);
+  color: #818cf8;
+  border-color: rgba(129, 140, 248, 0.4);
+}
+
+.tool-selector {
+  display: flex;
+  gap: 4px;
+}
+
+.tool-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tool-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.tool-btn.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #818cf8;
+}
+
 .status-badge {
   font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  padding-left: 10px;
+  color: #a1a1aa;
+}
+
+/* GPU Hardware-Accelerated Ghost Cursor */
+.ghost-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  will-change: transform;
+  z-index: 8888;
+}
+
+/* Onshape-Style 'S' Key Cursor Quick HUD */
+.cursor-hud {
+  position: absolute;
+  transform: translate(-50%, 15px);
+  background: rgba(24, 24, 27, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+.hud-header {
+  font-size: 10px;
+  font-weight: 800;
+  color: #a1a1aa;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.hud-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.hud-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f4f4f5;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hud-btn:hover {
+  background: #6366f1;
+  border-color: #818cf8;
 }
