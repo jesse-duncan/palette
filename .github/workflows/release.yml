@@ -1,12 +1,13 @@
-name: "Release Build"
+name: "Build and Release Palette"
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v*'
 
 jobs:
-  publish-tauri:
+  build-tauri:
     permissions:
       contents: write
     strategy:
@@ -14,29 +15,27 @@ jobs:
       matrix:
         include:
           - platform: 'windows-latest'
-            args: ''
+          - platform: 'macos-latest'
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: install Rust stable
+      - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install frontend dependencies
-        run: npm install
-
-      - uses: tauri-apps/tauri-action@v0.5
+      - name: Build Tauri App
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Stamp Overlay ${{ github.ref_name }}'
-          releaseBody: 'Automated desktop build.'
+          tagName: v1.0.0-${{ github.run_number }}
+          releaseName: "Palette v1.0.0 (Build ${{ github.run_number }})"
+          releaseBody: "Automated release of Palette overlay."
           releaseDraft: false
           prerelease: false
