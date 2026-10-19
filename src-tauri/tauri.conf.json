@@ -28,7 +28,6 @@
   },
   "bundle": {
     "active": true,
-    "identifier": "com.palette.overlay",
     "targets": ["app"]
   }
 }
