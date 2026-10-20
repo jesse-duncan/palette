@@ -26,12 +26,21 @@ jobs:
         with:
           node-version: 20
 
-# Add this step to install dependencies
-      - name: Install dependencies
-        run: npm install          
-
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Generate Placeholder Icons
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const dir = path.join('src-tauri', 'icons');
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          const png = Buffer.from('iVBORw0KGgoAAAANSU56AAAAAElFTkSuQmCC', 'base64');
+          ['32x32.png', '128x128.png', '128x128@2x.png', 'icon.icns', 'icon.ico'].forEach(f => {
+            fs.writeFileSync(path.join(dir, f), png);
+          });
+          "
 
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
