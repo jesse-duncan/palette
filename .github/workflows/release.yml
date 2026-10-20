@@ -32,18 +32,40 @@ jobs:
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Generate Placeholder Icons
+      - name: Generate App Icons
         run: |
           node -e "
           const fs = require('fs');
-          const path = require('path');
-          const dir = path.join('src-tauri', 'icons');
-          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-          const png = Buffer.from('iVBORw0KGgoAAAANSU56AAAAAElFTkSuQmCC', 'base64');
-          ['32x32.png', '128x128.png', '128x128@2x.png', 'icon.icns', 'icon.ico'].forEach(f => {
-            fs.writeFileSync(path.join(dir, f), png);
-          });
+          const zlib = require('zlib');
+          function makeChunk(type, data) {
+            const len = Buffer.alloc(4); len.writeUInt32BE(data.length, 0);
+            const typeBuf = Buffer.from(type, 'ascii');
+            const buf = Buffer.concat([typeBuf, data]);
+            const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(buf), 0);
+            return Buffer.concat([len, buf, crc]);
+          }
+          function crc32(buf) {
+            let c = 0xffffffff;
+            for (let i = 0; i < buf.length; i++) {
+              c ^= buf[i];
+              for (let j = 0; j < 8; j++) c = (c >>> 1) ^ (c & 1 ? 0xedb88320 : 0);
+            }
+            return (c ^ 0xffffffff) >>> 0;
+          }
+          const w = 512, h = 512;
+          const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+          const ihdrData = Buffer.alloc(13);
+          ihdrData.writeUInt32BE(w, 0); ihdrData.writeUInt32BE(h, 4);
+          ihdrData[8] = 8; ihdrData[9] = 2;
+          const ihdr = makeChunk('IHDR', ihdrData);
+          const row = Buffer.alloc(1 + w * 3); row[0] = 0;
+          for (let i = 1; i < row.length; i += 3) { row[i] = 129; row[i+1] = 140; row[i+2] = 248; }
+          const raw = Buffer.concat(Array(h).fill(row));
+          const idat = makeChunk('IDAT', zlib.deflateSync(raw));
+          const iend = makeChunk('IEND', Buffer.alloc(0));
+          fs.writeFileSync('app-icon.png', Buffer.concat([sig, ihdr, idat, iend]));
           "
+          npx tauri icon app-icon.png
 
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
